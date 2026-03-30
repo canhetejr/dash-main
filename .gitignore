@@ -1,0 +1,27 @@
+node_modules/
+.next/
+.next-prod/
+out/
+coverage/
+
+# Env files (não versionar segredos)
+.env
+.env.local
+.env.*.local
+.env.*
+!.env.example
+
+*.tsbuildinfo
+next-env.d.ts
+
+# Docker
+Dockerfile~
+
+# IDE
+.vscode/
+.cursor/
+.idea/
+
+# Local automation artifacts
+terminals/
+agent-transcripts/
