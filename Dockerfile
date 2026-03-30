@@ -11,6 +11,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+ENV NODE_OPTIONS="--max_old_space_size=1024"
 RUN npm run build
 
 FROM node:20-slim AS runner
