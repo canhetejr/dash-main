@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  dash-survey:
+    ports:
+      # Este mapeamento é apenas para testes locais (docker-compose up)
+      # e é sumariamente ignorado pela abstração padrão do Coolify Production se não acionado explicitamente.
+      - "3000:3000"
