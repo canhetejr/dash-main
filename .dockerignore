@@ -22,4 +22,6 @@ yarn-error.log*
 # Local work / automation artifacts
 terminals
 agent-transcripts
-
+.git
+docker-compose.yml
+README-DEPLOY.md

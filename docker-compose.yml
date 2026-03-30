@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  dash-survey:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dash-survey
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      # Configurações nativas
+      - PORT=3000
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      
+      # Ambiente Coolify: Preencher na UI 'Environment Variables'
+      - GOOGLE_SHEETS_SPREADSHEET_ID=${GOOGLE_SHEETS_SPREADSHEET_ID}
+      - GOOGLE_SHEETS_RANGE=${GOOGLE_SHEETS_RANGE}
+      - GOOGLE_SHEETS_MOODLE_BASE_RANGE=${GOOGLE_SHEETS_MOODLE_BASE_RANGE}
+      - GOOGLE_SERVICE_ACCOUNT_EMAIL=${GOOGLE_SERVICE_ACCOUNT_EMAIL}
+      - GOOGLE_PRIVATE_KEY=${GOOGLE_PRIVATE_KEY}
+      - USE_MOCK_DATA=${USE_MOCK_DATA:-false}
+      - MOODLE_URL_TEMPLATE=${MOODLE_URL_TEMPLATE}

@@ -20,9 +20,14 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 
-# Next.js standalone entrypoint
-COPY --from=builder /app/.next-prod/standalone ./
-COPY --from=builder /app/.next-prod/static ./.next-prod/static
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+# Set correct permissions for standalone output
+COPY --from=builder --chown=nextjs:nodejs /app/.next-prod/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next-prod/static ./.next-prod/static
+
+USER nextjs
 
 EXPOSE 3000
 CMD ["node", "server.js"]
