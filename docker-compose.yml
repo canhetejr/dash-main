@@ -7,8 +7,10 @@ services:
       dockerfile: Dockerfile
     container_name: dash-survey
     restart: unless-stopped
+    expose:
+      - "3000" # Exposto para o Traefik/Proxy do Coolify
     ports:
-      - "3000:3000"
+      - "${HOST_PORT:-3000}:3000" # Mantém teste local funcional acessando host na 3000
     environment:
       # Configurações nativas
       - PORT=3000
