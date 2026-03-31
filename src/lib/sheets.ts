@@ -4,9 +4,20 @@ import type { SurveyRawRow } from '@/types/survey';
 
 export type MoodleUrlById = Map<string, string>;
 
+/** PEM da service account a partir do .env (lida com CRLF, aspas e \\n literais). */
+function normalizePrivateKey(raw: string | undefined): string | undefined {
+  if (!raw) return undefined;
+  let k = raw.replace(/\r/g, '').trim();
+  if ((k.startsWith('"') && k.endsWith('"')) || (k.startsWith("'") && k.endsWith("'"))) {
+    k = k.slice(1, -1).trim();
+  }
+  k = k.replace(/\\n/g, '\n').trim();
+  return k || undefined;
+}
+
 function getAuth() {
-  const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-  const key = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+  const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL?.trim();
+  const key = normalizePrivateKey(process.env.GOOGLE_PRIVATE_KEY);
 
   if (!email || !key) {
     throw new Error(

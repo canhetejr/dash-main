@@ -4,6 +4,9 @@ node_modules/
 out/
 coverage/
 
+# Chaves JSON de conta de serviço GCP (download do console)
+pesquisa-da-disciplina-*.json
+
 # Env files (não versionar segredos)
 .env
 .env.local
