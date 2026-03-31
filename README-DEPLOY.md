@@ -14,10 +14,14 @@ Esta aplicação está completamente otimizada para ser executada no seu servido
 > No painel do Coolify, navegue até a sub-seção **Environment Variables** do Serviço recém adicionado, e adicione obrigatoriamente (em plain / raw text) as seguintes chaves do seu caso de uso:
 
 - `GOOGLE_SHEETS_SPREADSHEET_ID`
-- `GOOGLE_SHEETS_RANGE` (ex: `TRATAMENTO!A:L`)
+- `GOOGLE_SHEETS_RANGE` (ex: `TRATAMENTO!A:M`)
 - `GOOGLE_SHEETS_MOODLE_BASE_RANGE` (ex: `BASE!A:B`)
 - `GOOGLE_SERVICE_ACCOUNT_EMAIL`
-- `GOOGLE_PRIVATE_KEY`
+- **`GOOGLE_PRIVATE_KEY_BASE64` (recomendado no Coolify)** — conteúdo do campo `private_key` do JSON da service account, em **Base64 de uma linha** do texto PEM (UTF-8). Evita erros de decode no OpenSSL (`ERR_OSSL_UNSUPPORTED`) quando quebras de linha são perdidas nas envs.
+  - Linux/WSL: `jq -r .private_key conta.json | base64 -w0`
+  - macOS: `jq -r .private_key conta.json | base64 | tr -d '\n'`
+  - PowerShell: `$k = (Get-Content conta.json -Raw | ConvertFrom-Json).private_key; [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($k))`
+- `GOOGLE_PRIVATE_KEY` — alternativa local; no Coolify use preferencialmente Base64 acima.
 - `USE_MOCK_DATA` (Definir como `true` temporariamente caso queira subir antes pra ver se vaza a tela de forma mockada).
 - `MOODLE_URL_TEMPLATE`
 

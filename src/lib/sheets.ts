@@ -1,13 +1,17 @@
+import { createPrivateKey } from 'node:crypto';
 import { google } from 'googleapis';
 import { SHEETS_CONFIG, COLUMN_MAP } from './constants';
 import type { SurveyRawRow } from '@/types/survey';
 
 export type MoodleUrlById = Map<string, string>;
 
+const PEM_BEGIN = '-----BEGIN PRIVATE KEY-----';
+const PEM_END = '-----END PRIVATE KEY-----';
+
 /** PEM da service account a partir do .env (lida com CRLF, aspas e \\n literais). */
 function normalizePrivateKey(raw: string | undefined): string | undefined {
   if (!raw) return undefined;
-  let k = raw.replace(/\r/g, '').trim();
+  let k = raw.replace(/^\uFEFF/, '').replace(/\r/g, '').trim();
   if ((k.startsWith('"') && k.endsWith('"')) || (k.startsWith("'") && k.endsWith("'"))) {
     k = k.slice(1, -1).trim();
   }
@@ -15,13 +19,55 @@ function normalizePrivateKey(raw: string | undefined): string | undefined {
   return k || undefined;
 }
 
+/**
+ * Painéis tipo Coolify às vezes entregam o PEM numa linha só; o OpenSSL 3 pode falhar com
+ * `ERR_OSSL_UNSUPPORTED` / DECODER. Reembrulha o corpo base64 em linhas de 64 caracteres.
+ */
+function repairPkcs8Pem(pem: string): string {
+  if (!pem.includes(PEM_BEGIN) || !pem.includes(PEM_END)) return pem;
+  const bodyStart = pem.indexOf(PEM_BEGIN) + PEM_BEGIN.length;
+  const bodyEnd = pem.indexOf(PEM_END);
+  if (bodyEnd <= bodyStart) return pem;
+  const body = pem.slice(bodyStart, bodyEnd).replace(/\s/g, '');
+  if (!body) return pem;
+  const lines = body.match(/.{1,64}/g) ?? [body];
+  return `${PEM_BEGIN}\n${lines.join('\n')}\n${PEM_END}\n`;
+}
+
+function pemFromBase64Env(): string | undefined {
+  const b64 = process.env.GOOGLE_PRIVATE_KEY_BASE64?.replace(/^\uFEFF/, '').trim();
+  if (!b64) return undefined;
+  try {
+    const decoded = Buffer.from(b64, 'base64').toString('utf8');
+    return normalizePrivateKey(decoded);
+  } catch {
+    return undefined;
+  }
+}
+
+function resolvePrivateKeyPem(): string | undefined {
+  const fromB64 = pemFromBase64Env();
+  const candidate = fromB64 ?? normalizePrivateKey(process.env.GOOGLE_PRIVATE_KEY);
+  if (!candidate) return undefined;
+
+  for (const pem of [candidate, repairPkcs8Pem(candidate)]) {
+    try {
+      createPrivateKey(pem);
+      return pem;
+    } catch {
+      /* tenta próximo */
+    }
+  }
+  return candidate;
+}
+
 function getAuth() {
   const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL?.trim();
-  const key = normalizePrivateKey(process.env.GOOGLE_PRIVATE_KEY);
+  const key = resolvePrivateKeyPem();
 
   if (!email || !key) {
     throw new Error(
-      'Missing Google Sheets credentials. Set GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY.'
+      'Missing Google Sheets credentials. Set GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY (or GOOGLE_PRIVATE_KEY_BASE64 for Docker/Coolify).'
     );
   }
 
