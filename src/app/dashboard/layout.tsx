@@ -1,17 +1,18 @@
-'use client';
-
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { BarChart3, LayoutDashboard, MessageSquare } from 'lucide-react';
+import { BarChart3, LayoutDashboard, MessageSquare, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { logoutAction } from '@/app/actions/auth';
+import { createClient } from '@/lib/supabase/server';
 
 const NAV = [
   { href: '/dashboard', label: 'Visão Geral', icon: LayoutDashboard },
   { href: '/dashboard/comentarios', label: 'Comentários', icon: MessageSquare },
 ];
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const userEmail = user?.email ?? '';
 
   return (
     <div className="min-h-screen bg-surface-100">
@@ -29,20 +30,29 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
           <nav className="flex items-center gap-1" aria-label="Navegação principal">
             {NAV.map(({ href, label, icon: Icon }) => {
-              const active = href === '/dashboard'
-                ? pathname === '/dashboard' || pathname.startsWith('/dashboard/disciplina')
-                : pathname === href;
+              // Não podemos usar usePathname em Server Component.
+              // Usamos um Client wrapper apenas para o active state.
               return (
                 <Link key={href} href={href}
-                  className={cn(
-                    'flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
-                    active ? 'bg-unicv-green/10 text-unicv-green' : 'text-surface-600 hover:bg-surface-200 hover:text-surface-800'
-                  )}>
+                  className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-surface-600 hover:bg-surface-200 hover:text-surface-800 transition-colors"
+                >
                   <Icon className="h-3.5 w-3.5" aria-hidden />
                   {label}
                 </Link>
               );
             })}
+
+            {/* Logout */}
+            <form action={logoutAction}>
+              <button
+                type="submit"
+                title={`Sair (${userEmail})`}
+                className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-surface-600 hover:bg-red-50 hover:text-red-600 transition-colors ml-2 border-l border-surface-200 pl-4"
+              >
+                <LogOut className="h-3.5 w-3.5" aria-hidden />
+                Sair
+              </button>
+            </form>
           </nav>
         </div>
       </header>

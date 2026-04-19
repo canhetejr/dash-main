@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
+import { FilterX } from 'lucide-react';
 
 export function MvpFilters({ 
   centros, 
@@ -24,6 +25,8 @@ export function MvpFilters({
     } else {
       params.delete(key);
     }
+    // Sempre volta para a página 1 ao alterar filtros
+    params.delete('page');
     router.push(`/dashboard?${params.toString()}`);
   };
 
@@ -32,15 +35,15 @@ export function MvpFilters({
   };
 
   return (
-    <Card>
-      <CardContent className="p-4 flex flex-wrap gap-4 items-end">
-        <div className="flex flex-col gap-1.5 w-full sm:w-[300px]">
-          <label htmlFor="centro-filter" className="text-sm font-medium">Centro</label>
+    <Card className="border-surface-200 shadow-sm bg-surface-50/50">
+      <CardContent className="p-4 flex flex-col sm:flex-row flex-wrap gap-4 items-end">
+        <div className="flex flex-col gap-1.5 w-full sm:w-[280px]">
+          <label htmlFor="centro-filter" className="text-xs font-semibold text-surface-600 uppercase tracking-wider">Centro</label>
           <select 
             id="centro-filter"
             value={currentCentro}
             onChange={(e) => handleFilterChange('centro', e.target.value)}
-            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-10 w-full items-center justify-between rounded-md border border-surface-300 bg-white px-3 py-2 text-sm text-surface-900 ring-offset-background transition-colors focus:outline-none focus:ring-2 focus:ring-unicv-green focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
           >
             <option value="">Todos os centros</option>
             {centros.map(c => (
@@ -49,13 +52,13 @@ export function MvpFilters({
           </select>
         </div>
 
-        <div className="flex flex-col gap-1.5 w-full sm:w-[300px]">
-          <label htmlFor="disciplina-filter" className="text-sm font-medium">Disciplina</label>
+        <div className="flex flex-col gap-1.5 w-full sm:w-[320px]">
+          <label htmlFor="disciplina-filter" className="text-xs font-semibold text-surface-600 uppercase tracking-wider">Disciplina</label>
           <select 
             id="disciplina-filter"
             value={currentDisciplina}
             onChange={(e) => handleFilterChange('disciplina', e.target.value)}
-            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-10 w-full items-center justify-between rounded-md border border-surface-300 bg-white px-3 py-2 text-sm text-surface-900 ring-offset-background transition-colors focus:outline-none focus:ring-2 focus:ring-unicv-green focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
           >
             <option value="">Todas as disciplinas</option>
             {disciplinas.map(d => (
@@ -67,8 +70,9 @@ export function MvpFilters({
         {(currentCentro || currentDisciplina) && (
           <button 
             onClick={handleClearFilters}
-            className="h-10 px-4 py-2 bg-secondary text-secondary-foreground hover:bg-secondary/80 inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            className="h-10 px-4 py-2 bg-surface-200 text-surface-700 hover:bg-surface-300 hover:text-surface-900 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unicv-green disabled:pointer-events-none disabled:opacity-50"
           >
+            <FilterX className="h-4 w-4 mr-2" />
             Limpar Filtros
           </button>
         )}
