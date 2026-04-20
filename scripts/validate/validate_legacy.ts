@@ -1,6 +1,6 @@
 import * as XLSX from 'xlsx';
-import { transformAll, buildDashboardData } from '../src/lib/transform';
-import type { SurveyRawRow } from '../src/types/survey';
+import { transformAll, buildDashboardData } from '../../src/lib/transform';
+import type { SurveyRawRow } from '../../src/types/survey';
 
 const FILE_PATH = '/home/canhete/Projetos/clientes/unicive/PESQUISA DA DISCPLINA .xlsx';
 

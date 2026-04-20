@@ -39,8 +39,13 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  // Rota protegida sem usuário → login
-  if (pathname.startsWith('/dashboard') && !user) {
+  // Rotas protegidas sem usuário → login
+  const isProtected =
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/profile') ||
+    pathname.startsWith('/admin');
+
+  if (isProtected && !user) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = '/login';
     loginUrl.searchParams.set('redirectTo', pathname);

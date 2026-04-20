@@ -9,14 +9,19 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        unicv: {
-          green: '#4E6930',
-          'green-light': '#5F7D3B',
-          'green-dark': '#3D5226',
-          gold: '#D99528',
-          'gold-light': '#E5AD4A',
-          'gold-dark': '#B87D1F',
+        // Unicive brand palette
+        unicive: {
+          green: '#005941',
+          'green-hover': '#00472f',
+          'green-light': '#7EBD73',
+          'green-pale': '#EBF5E9',
+          'green-muted': '#D4EDCF',
+          amber: '#E7972A',
+          'amber-light': '#FDF3E3',
+          'amber-muted': '#F9E2B6',
         },
+        // Backwards-compat alias
+        'unicv-green': '#005941',
         surface: {
           DEFAULT: '#FAFBFC',
           50: '#FFFFFF',
@@ -24,28 +29,33 @@ const config: Config = {
           200: '#EFF1F5',
           300: '#E2E5EB',
           400: '#CDD2DA',
-          500: '#A0A8B4',
-          600: '#6B7280',
-          700: '#4B5563',
-          800: '#374151',
-          900: '#1F2937',
+          500: '#8A92A0',
+          600: '#5C6472',
+          700: '#3E4654',
+          800: '#2B3340',
+          900: '#1A2230',
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        heading: ['Kumbh Sans', 'Inter', 'system-ui', 'sans-serif'],
+        sans: ['Open Sans', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       borderRadius: {
         DEFAULT: '8px',
-        lg: '10px',
-        xl: '12px',
+        lg: '12px',
+        xl: '16px',
+        '2xl': '20px',
+        '3xl': '24px',
       },
       boxShadow: {
-        card: '0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)',
-        'card-hover': '0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04)',
+        card: '0 1px 4px rgba(0,89,65,0.06), 0 1px 2px rgba(0,0,0,0.04)',
+        'card-hover': '0 6px 20px rgba(0,89,65,0.10), 0 2px 6px rgba(0,0,0,0.05)',
         soft: '0 2px 8px rgba(0,0,0,0.06)',
+        institution: '0 0 0 1px rgba(0,89,65,0.08), 0 4px 16px rgba(0,89,65,0.08)',
       },
       fontSize: {
-        'kpi': ['28px', { lineHeight: '1.1', fontWeight: '700' }],
+        'kpi': ['36px', { lineHeight: '1.05', fontWeight: '700', letterSpacing: '-0.02em' }],
+        'kpi-sm': ['26px', { lineHeight: '1.1', fontWeight: '700' }],
       },
     },
   },

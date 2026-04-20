@@ -109,6 +109,14 @@ export interface QuestionAggregation {
   likertDistribution: Record<string, number>;
 }
 
+/** Ponto de dados temporais para gráficos de evolução */
+export interface TimeSeriesPoint {
+  period: string;
+  totalResponses: number;
+  likertAverage: number;
+  favorableRate: number;
+}
+
 // ---------------------------------------------------------------------------
 // Transformação de linha individual
 // ---------------------------------------------------------------------------
@@ -363,3 +371,52 @@ export function computeLikertDistribution(rows: TransformedSurveyRow[]) {
     };
   });
 }
+
+/**
+ * Agrega dados temporalmente (por mês).
+ */
+export function computeTimeSeries(rows: TransformedSurveyRow[]): TimeSeriesPoint[] {
+  const map = new Map<string, TransformedSurveyRow[]>();
+
+  rows.forEach((r) => {
+    let period = 'Desconhecido';
+    if (r.submittedAt) {
+      // Supabase timestamp format: YYYY-MM-DDTHH... or YYYY-MM-DD
+      const match = r.submittedAt.match(/^(\d{4}-\d{2})/);
+      if (match) {
+        period = match[1]; // "YYYY-MM"
+      } else {
+         // fallback if it's DD/MM/YYYY
+         const parts = r.submittedAt.split('/');
+         if (parts.length === 3) {
+            period = `${parts[2].substring(0,4)}-${parts[1]}`;
+         }
+      }
+    }
+    const list = map.get(period) ?? [];
+    list.push(r);
+    map.set(period, list);
+  });
+
+  return Array.from(map.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([period, items]) => {
+      const allScores: number[] = [];
+      items.forEach((r) => {
+        [r.scoreQ1, r.scoreQ2, r.scoreQ3, r.scoreQ4, r.scoreQ5, r.scoreQ6].forEach((v) => {
+          if (isValidScore(v)) allScores.push(v);
+        });
+      });
+
+      const likertAverage = computeAverage(allScores);
+      const distribution = computeFavorabilityDistribution(allScores);
+
+      return {
+        period,
+        totalResponses: items.length,
+        likertAverage,
+        favorableRate: distribution.favorableRate,
+      };
+    });
+}
+

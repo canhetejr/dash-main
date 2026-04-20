@@ -13,7 +13,8 @@ pesquisa-da-disciplina-*.json
 .env.*.local
 .env.*
 !.env.example
-
+.gemini/
+.agents/
 *.tsbuildinfo
 next-env.d.ts
 

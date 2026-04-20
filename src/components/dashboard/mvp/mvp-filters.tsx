@@ -1,8 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Card, CardContent } from '@/components/ui/card';
-import { FilterX } from 'lucide-react';
+import { SlidersHorizontal, X } from 'lucide-react';
 
 export function MvpFilters({ 
   centros, 
@@ -25,7 +24,6 @@ export function MvpFilters({
     } else {
       params.delete(key);
     }
-    // Sempre volta para a página 1 ao alterar filtros
     params.delete('page');
     router.push(`/dashboard?${params.toString()}`);
   };
@@ -34,16 +32,35 @@ export function MvpFilters({
     router.push('/dashboard');
   };
 
+  const hasFilters = !!(currentCentro || currentDisciplina);
+
+  const selectBase =
+    'h-9 w-full rounded-xl border border-surface-200 bg-surface-50 px-3 py-1.5 text-[13px] font-medium text-surface-900 ' +
+    'shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-unicive-green/20 focus:border-unicive-green ' +
+    'hover:bg-white hover:border-surface-300 ' +
+    'disabled:cursor-not-allowed disabled:opacity-50 appearance-none cursor-pointer ' +
+    'bg-[url("data:image/svg+xml,%3Csvg%20xmlns%3D\'http%3A//www.w3.org/2000/svg\'%20width%3D\'12\'%20height%3D\'12\'%20viewBox%3D\'0%200%2024%2024\'%20fill%3D\'none\'%20stroke%3D\'%235C6472\'%20stroke-width%3D\'2\'%3E%3Cpath%20d%3D\'M6%209l6%206%206-6\'/%3E%3C/svg%3E")] ' +
+    'bg-no-repeat bg-[right_12px_center]';
+
   return (
-    <Card className="border-surface-200 shadow-sm bg-surface-50/50">
-      <CardContent className="p-4 flex flex-col sm:flex-row flex-wrap gap-4 items-end">
-        <div className="flex flex-col gap-1.5 w-full sm:w-[280px]">
-          <label htmlFor="centro-filter" className="text-xs font-semibold text-surface-600 uppercase tracking-wider">Centro</label>
-          <select 
+    <div className="card-institution p-4">
+      <div className="flex flex-wrap items-end gap-4">
+        {/* Label left */}
+        <div className="flex items-center gap-2 text-surface-500 shrink-0 self-center">
+          <SlidersHorizontal className="h-4 w-4" aria-hidden />
+          <span className="text-xs font-semibold uppercase tracking-widest hidden sm:inline">Filtros</span>
+        </div>
+
+        {/* Centro */}
+        <div className="flex flex-col gap-1.5 flex-1 min-w-[180px] max-w-[280px]">
+          <label htmlFor="centro-filter" className="text-[11px] font-semibold uppercase tracking-widest text-surface-400">
+            Centro
+          </label>
+          <select
             id="centro-filter"
             value={currentCentro}
             onChange={(e) => handleFilterChange('centro', e.target.value)}
-            className="flex h-10 w-full items-center justify-between rounded-md border border-surface-300 bg-white px-3 py-2 text-sm text-surface-900 ring-offset-background transition-colors focus:outline-none focus:ring-2 focus:ring-unicv-green focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
+            className={selectBase}
           >
             <option value="">Todos os centros</option>
             {centros.map(c => (
@@ -52,13 +69,16 @@ export function MvpFilters({
           </select>
         </div>
 
-        <div className="flex flex-col gap-1.5 w-full sm:w-[320px]">
-          <label htmlFor="disciplina-filter" className="text-xs font-semibold text-surface-600 uppercase tracking-wider">Disciplina</label>
-          <select 
+        {/* Disciplina */}
+        <div className="flex flex-col gap-1.5 flex-1 min-w-[200px] max-w-[340px]">
+          <label htmlFor="disciplina-filter" className="text-[11px] font-semibold uppercase tracking-widest text-surface-400">
+            Disciplina
+          </label>
+          <select
             id="disciplina-filter"
             value={currentDisciplina}
             onChange={(e) => handleFilterChange('disciplina', e.target.value)}
-            className="flex h-10 w-full items-center justify-between rounded-md border border-surface-300 bg-white px-3 py-2 text-sm text-surface-900 ring-offset-background transition-colors focus:outline-none focus:ring-2 focus:ring-unicv-green focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
+            className={selectBase}
           >
             <option value="">Todas as disciplinas</option>
             {disciplinas.map(d => (
@@ -67,16 +87,32 @@ export function MvpFilters({
           </select>
         </div>
 
-        {(currentCentro || currentDisciplina) && (
-          <button 
+        {/* Limpar filtros */}
+        {hasFilters && (
+          <button
             onClick={handleClearFilters}
-            className="h-10 px-4 py-2 bg-surface-200 text-surface-700 hover:bg-surface-300 hover:text-surface-900 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-unicv-green disabled:pointer-events-none disabled:opacity-50"
+            className="flex h-9 items-center gap-1.5 rounded-xl border border-surface-200 bg-white px-3 text-[12px] font-semibold text-surface-600 shadow-sm transition-all hover:bg-surface-50 hover:border-surface-300 hover:text-surface-900 self-end"
           >
-            <FilterX className="h-4 w-4 mr-2" />
+            <X className="h-4 w-4" aria-hidden />
             Limpar Filtros
           </button>
         )}
-      </CardContent>
-    </Card>
+      </div>
+
+      {/* Active filter summary */}
+      {hasFilters && (
+        <div className="mt-3.5 pt-3.5 border-t border-surface-200">
+          <p className="text-xs text-surface-500">
+            <span className="font-semibold text-unicive-green">Filtrando por:</span>{' '}
+            {[
+              currentCentro && `Centro = ${currentCentro}`,
+              currentDisciplina && `Disciplina = ${currentDisciplina}`,
+            ]
+              .filter(Boolean)
+              .join(' · ')}
+          </p>
+        </div>
+      )}
+    </div>
   );
 }

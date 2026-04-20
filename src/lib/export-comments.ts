@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx';
-import type { SurveyRow } from '@/types/survey';
+import type { TransformedSurveyRow } from '@/lib/supabase-transform';
 import { formatPercentage, formatScore } from './scoring';
 
 type ExportCommentRow = {
@@ -15,9 +15,9 @@ type ExportCommentRow = {
   Sugestão: string;
 };
 
-function rowToExportFormat(row: SurveyRow): ExportCommentRow {
+function rowToExportFormat(row: TransformedSurveyRow): ExportCommentRow {
   return {
-    Data: row.date,
+    Data: row.submittedAt,
     Disciplina: row.disciplina,
     ID: row.id,
     Centro: row.centro,
@@ -41,7 +41,7 @@ function downloadBlob(blob: Blob, filename: string) {
   URL.revokeObjectURL(url);
 }
 
-export function exportCommentsToCSV(rows: SurveyRow[], filename = 'comentarios-filtrados'): void {
+export function exportCommentsToCSV(rows: TransformedSurveyRow[], filename = 'comentarios-filtrados'): void {
   if (rows.length === 0) return;
   const exportRows = rows.map(rowToExportFormat);
   const headers = Object.keys(exportRows[0] ?? {}) as (keyof ExportCommentRow)[];
@@ -66,7 +66,7 @@ export function exportCommentsToCSV(rows: SurveyRow[], filename = 'comentarios-f
 }
 
 export function exportCommentsToXLSX(
-  rows: SurveyRow[],
+  rows: TransformedSurveyRow[],
   filename = 'comentarios-filtrados'
 ): void {
   if (rows.length === 0) return;

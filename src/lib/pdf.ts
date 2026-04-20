@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import type { DashboardData, SurveyRow, DashboardSummary } from '@/types/survey';
+import type { TransformedSurveyRow } from '@/lib/supabase-transform';
 import type { LikertDistribution, LikertLabel } from '@/types/survey';
 import { formatDecimal, formatPercent, formatNumber, formatDateBR } from '@/lib/formatters';
 
@@ -271,7 +272,7 @@ export function exportDisciplinePDF(args: {
 
 export function exportCommentsPDF(args: {
   filename: string;
-  rows: SurveyRow[];
+  rows: TransformedSurveyRow[];
   filters?: PdfFilters;
 }) {
   const { filename, rows, filters } = args;
@@ -306,7 +307,7 @@ export function exportCommentsPDF(args: {
     body: rows
       .slice(0, 40)
       .map((r) => [
-        r.date,
+        r.submittedAt,
         r.disciplina,
         r.centroSigla,
         r.classificationBadge,

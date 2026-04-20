@@ -4,16 +4,122 @@
 
 @layer base {
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-  body { min-height: 100vh; line-height: 1.6; background-color: #F7F8FA; color: #1F2937; }
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+  body {
+    min-height: 100vh;
+    line-height: 1.65;
+    background-color: #F4F6F8;
+    color: #1A2230;
+    font-family: var(--font-opensans, 'Open Sans', system-ui, sans-serif);
+  }
   input, button, textarea, select { font: inherit; color: inherit; }
   p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
+
+  /* Heading uses Kumbh Sans */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-kumbh, 'Kumbh Sans', 'Inter', system-ui, sans-serif);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  /* Focus visible ring — consistent, accessible */
+  :focus-visible {
+    outline: 2px solid #005941;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
 }
 
 @layer utilities {
+  /* ── Scrollbar ─────────────────────────────────── */
   .scrollbar-thin { scrollbar-width: thin; scrollbar-color: #CDD2DA transparent; }
   .scrollbar-thin::-webkit-scrollbar { width: 5px; height: 5px; }
   .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
   .scrollbar-thin::-webkit-scrollbar-thumb { background-color: #CDD2DA; border-radius: 3px; }
   .scrollbar-thin::-webkit-scrollbar-thumb:hover { background-color: #A0A8B4; }
+
+  /* ── Card institucional ────────────────────────── */
+  .card-institution {
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 89, 65, 0.08);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 2px 8px rgba(0,89,65,0.03);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+  .card-institution:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06), 0 8px 24px rgba(0,89,65,0.05);
+    border-color: rgba(0, 89, 65, 0.14);
+  }
+
+  /* ── Badge Unicive ─────────────────────────────── */
+  .badge-unicive {
+    background-color: #EBF5E9;
+    color: #005941;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  /* ── Hero gradient strip ───────────────────────── */
+  .hero-strip {
+    background: linear-gradient(135deg, #005941 0%, #007a59 60%, #7EBD73 100%);
+  }
+
+  /* ── Transições de página suaves ──────────────── */
+  .page-enter {
+    animation: pageEnter 0.2s ease-out both;
+  }
+  @keyframes pageEnter {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Shimmer pulse para skeletons ──────────────── */
+  .skeleton-shimmer {
+    background: linear-gradient(90deg, #F0F2F5 25%, #E8ECF0 50%, #F0F2F5 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0%   { background-position: 200% center; }
+    100% { background-position: -200% center; }
+  }
+
+  /* ── Fade in ───────────────────────────────────── */
+  .fade-in {
+    animation: fadeIn 0.25s ease-out both;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* ── Hover lift discreto ───────────────────────── */
+  .hover-lift {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  }
+
+  /* ── Spacing rítmico — seções ──────────────────── */
+  .section-gap  { gap: 1.5rem; }  /* gap-6  — entre seções */
+  .section-pad  { padding: 1.5rem; } /* p-6 — padding interno padrão */
+  .section-pad-sm { padding: 1.25rem; } /* p-5 — compact */
+
+  /* ── Max-width container institucional ─────────── */
+  .container-dashboard {
+    width: 100%;
+    max-width: 80rem; /* 1280px */
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
